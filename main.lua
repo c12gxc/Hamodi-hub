@@ -1,62 +1,57 @@
--- [[ Hamoudi Hub | حمودي هوب - النسخة الكاملة ]]
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-local Window = Library.CreateLib("Hamoudi Hub | حمودي هوب", "DarkTheme")
+local Window = Fluent:CreateWindow({
+    Title = "Hamoudi Hub | حمودي هوب (No Key)",
+    SubTitle = "Special Redz Version",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.End
+})
 
--- [1] قسم التلفيل
-local Tab1 = Window:NewTab("Main Farm")
-local Sec1 = Tab1:NewSection("Auto Farm Level")
-Sec1:NewDropdown("Weapon", "اختار سلاحك", {"Melee", "Sword", "Fruit"}, function(v) _G.SelectWeapon = v end)
-Sec1:NewToggle("Auto Farm", "تلفيل تلقائي", function(s) _G.AutoFarm = s end)
-Sec1:NewToggle("Fast Attack", "ضرب سريع", function(s) _G.FastAttack = s end)
+-- الأقسام نفس ترتيب الصور بالضبط
+local Tabs = {
+    Farm = Window:AddTab({ Title = "Farming", Icon = "home" }),
+    Fishing = Window:AddTab({ Title = "Fishing", Icon = "fish" }),
+    Quest = Window:AddTab({ Title = "Quest/Items", Icon = "sword" }),
+    Fruit = Window:AddTab({ Title = "Fruit/Raid", Icon = "cherry" }),
+    Stats = Window:AddTab({ Title = "Stats", Icon = "bar-chart" }),
+    Teleport = Window:AddTab({ Title = "Teleport", Icon = "map-pin" }),
+    Misc = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
 
--- [2] قسم البوصات
-local Tab2 = Window:NewTab("Bosses")
-local Sec2 = Tab2:NewSection("Boss & Katakuri")
-Sec2:NewToggle("Auto 500 NPCs", "تجهيز كاتاكوري", function(s) _G.AutoKat = s end)
-Sec2:NewToggle("Kill Bosses", "قتل البوصات", function(s) _G.KillBoss = s end)
+-- [1] Farming (مثل الصورة الأولى والثانية)
+Tabs.Farm:AddDropdown("Weapon", { Title = "Select Tool", Values = {"Melee", "Sword", "Fruit", "Gun"}, Default = "Melee", Callback = function(v) _G.SelectWeapon = v end })
+Tabs.Farm:AddToggle("AutoFarm", { Title = "Auto Farm Level", Default = false, Callback = function(v) _G.AutoFarm = v end })
+Tabs.Farm:AddToggle("AutoNearest", { Title = "Auto Farm Nearest", Default = false, Callback = function(v) _G.Nearest = v end })
+Tabs.Farm:AddSection("Collect")
+Tabs.Farm:AddToggle("AutoChest", { Title = "Auto Chest [ Tween ]", Default = false, Callback = function(v) _G.Chest = v end })
+Tabs.Farm:AddToggle("AutoBerry", { Title = "Auto Collect Berries", Default = false, Callback = function(v) _G.Berry = v end })
 
--- [3] قسم البحر
-local Tab3 = Window:NewTab("Sea Events")
-local Sec3 = Tab3:NewSection("Sea Beasts")
-Sec3:NewToggle("Auto Sea Beast", "وحش البحر", function(s) _G.SeaBeast = s end)
+-- [2] Fishing (مثل الصورة الرابعة والسادسة)
+Tabs.Fishing:AddToggle("AutoFish", { Title = "Auto Fish", Default = false, Callback = function(v) _G.AutoFish = v end })
+Tabs.Fishing:AddSlider("MaxBaits", { Title = "Max Baits", Min = 0, Max = 100, Default = 90, Callback = function(v) _G.Baits = v end })
+Tabs.Fishing:AddToggle("BuyBait", { Title = "Auto Buy Baits", Default = false, Callback = function(v) _G.BuyBait = v end })
 
--- [4] قسم الفواكه
-local Tab4 = Window:NewTab("Fruits")
-local Sec4 = Tab4:NewSection("Fruit Sniper")
-Sec4:NewToggle("Fruit ESP", "كشف الفواكه", function(s) _G.FESP = s end)
-Sec4:NewButton("Bring Fruits", "جلب الفواكه", function() --[[كود الجلب]] end)
+-- [3] Quest & Bosses (مثل الصورة الثالثة والسابعة)
+Tabs.Quest:AddDropdown("BossList", { Title = "Boss List", Values = {"The Gorilla King", "Bobby", "Yeti", "Katakuri"}, Default = "Bobby", Callback = function(v) _G.SelectedBoss = v end })
+Tabs.Quest:AddToggle("KillBoss", { Title = "Auto Kill Boss Selected", Default = false, Callback = function(v) _G.KillBoss = v end })
+Tabs.Quest:AddToggle("AllBosses", { Title = "Auto Farm All Bosses", Default = false, Callback = function(v) _G.AllBoss = v end })
+Tabs.Quest:AddToggle("TakeQuest", { Title = "Take Boss Quest", Default = false, Callback = function(v) _G.Quest = v end })
 
--- [5] قسم الأسلحة
-local Tab5 = Window:NewTab("Items")
-local Sec5 = Tab5:NewSection("Shop & Mastery")
-Sec5:NewButton("Buy Superhuman", "شراء سوبر هيومان", function() --[[ريموت الشراء]] end)
+-- [4] Fruits (مثل الصورة الخامسة)
+Tabs.Fruit:AddToggle("StoreFruit", { Title = "Auto Store Fruits", Default = false, Callback = function(v) _G.Store = v end })
+Tabs.Fruit:AddToggle("TpFruit", { Title = "Teleport To Fruits", Default = false, Callback = function(v) _G.TpFruit = v end })
+Tabs.Fruit:AddSection("Gacha")
+Tabs.Fruit:AddToggle("AutoGacha", { Title = "Auto Random Fruit", Default = false, Callback = function(v) _G.Gacha = v end })
 
--- [6] قسم الصناديق
-local Tab6 = Window:NewTab("Chests")
-local Sec6 = Tab6:NewSection("Money Farm")
-Sec6:NewToggle("Auto Chest", "تجميع فلوس", function(s) _G.Chest = s end)
+-- [5] Stats
+Tabs.Stats:AddToggle("AutoStat", { Title = "Auto Add Stats", Default = false, Callback = function(v) _G.UpStat = v end })
 
--- [7] قسم الإعدادات
-local Tab7 = Window:NewTab("Settings")
-local Sec7 = Tab7:NewSection("Misc")
-Sec7:NewSlider("WalkSpeed", "السرعة", 500, 16, function(s) game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s end)
-Sec7:NewButton("Server Hop", "تغيير سيرفر", function() --[[كود السيرفر]] end)
+-- [6] Settings
+Tabs.Misc:AddSlider("WalkSpeed", { Title = "Walk Speed", Min = 16, Max = 500, Default = 16, Callback = function(v) game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v end })
+Tabs.Misc:AddButton({ Title = "Server Hop", Callback = function() --[[كود السيرفر]] end })
 
--- [إضافة الدكمة العائمة للتصغير]
-local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-local Btn = Instance.new("TextButton", ScreenGui)
-Btn.Size = UDim2.new(0, 50, 0, 50)
-Btn.Position = UDim2.new(0, 20, 0, 20)
-Btn.Text = "H"
-Btn.Draggable = true
-Btn.MouseButton1Click:Connect(function()
-    game:GetService("CoreGui")["Hamoudi Hub | حمودي هوب"].Enabled = not game:GetService("CoreGui")["Hamoudi Hub | حمودي هوب"].Enabled
-end)
-
--- كود الحماية من الطرد (Anti-AFK)
-game:GetService("Players").LocalPlayer.Idled:connect(function()
-    game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-    wait(1)
-    game:GetService("VirtualUser"):Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-end)
+Window:SelectTab(1)
+Fluent:Notify({ Title = "Hamoudi Hub", Content = "شغال وبدون مفتاح! استمتع ضلعي", Duration = 5 })
